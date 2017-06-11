@@ -319,7 +319,8 @@ const GooglePlacesAutocomplete = React.createClass({
     }
   },
   _onPress(rowData) {
-    if (rowData.isPredefinedPlace !== true && this.props.fetchDetails === true) {
+    console.log(rowData);
+    if (rowData.isPredefinedPlace !== true && this.props.fetchDetails === true && rowData.isCurrentLocation !== true) {
       if (rowData.isLoading === true) {
         // already requesting
         return;
@@ -551,10 +552,13 @@ const GooglePlacesAutocomplete = React.createClass({
   },
 
   _onChangeText(text) {
-    this._request(text);
+    console.log(!this.props.currentLocation, text , this.props.currentLocationLabel);
+    if (!this.props.currentLocation || text !== this.props.currentLocationLabel){
+      this._request(text);
+    }
     this.setState({
       text: text,
-      listViewDisplayed: true,
+      listViewDisplayed: !this.props.currentLocation || text != this.props.currentLocationLabel,
     });
   },
 
@@ -712,8 +716,8 @@ const GooglePlacesAutocomplete = React.createClass({
       return (
         <ListView
           keyboardShouldPersistTaps={true}
-          keyboardDismissMode="on-drag"
-          style={[defaultStyles.listView, this.props.styles.listView]}
+          keyboardDismissMode="none"
+          style={{...defaultStyles.listView, ...this.props.styles.listView, maxHeight: this.props.maxHeight}}
           dataSource={this.state.dataSource}
           renderSeparator={this._renderSeparator}
           automaticallyAdjustContentInsets={false}
